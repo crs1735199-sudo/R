@@ -733,7 +733,7 @@
       section.innerHTML = `
         <h2 contenteditable="true">${title}</h2>
         <div class="body">
-          <div class="note" contenteditable="true">这里可以记录新的备婚事项。表格右上角可以加行、加列。</div>
+          <div class="note" contenteditable="true">这里可以记录新的备婚事项。表格右上角可以加行、加列、删行、删列。</div>
           <table data-table="${id}">
             <thead>
               <tr><th>状态</th><th>事项</th><th>负责人</th><th>截止/时间</th><th>备注</th></tr>
@@ -915,8 +915,8 @@
 
     function enhanceTables() {
       document.querySelectorAll("table").forEach(table => {
-        if (table.dataset.toolsEnhanced === "true") return;
-        table.dataset.toolsEnhanced = "true";
+        const oldTools = table.previousElementSibling;
+        if (oldTools?.classList.contains("table-tools")) oldTools.remove();
         const tools = document.createElement("div");
         tools.className = "table-tools";
         tools.innerHTML = '<button type="button" class="mini-btn">加行</button><button type="button" class="mini-btn">加列</button><button type="button" class="mini-btn danger-btn">删行</button><button type="button" class="mini-btn danger-btn">删列</button>';
