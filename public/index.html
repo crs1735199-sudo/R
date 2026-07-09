@@ -739,7 +739,7 @@
       </section>
 
       <div class="footer">
-        当前版本：云端自动连接版 v2026-07-09-7。发布后建议使用 Firebase Hosting 链接访问；云端数据仍保存在 Firestore，同一个文档 ID 多设备同步。
+        当前版本：云端自动连接版 v2026-07-09-8。发布后建议使用 Firebase Hosting 链接访问；云端数据仍保存在 Firestore，同一个文档 ID 多设备同步。
       </div>
     </main>
   </div>
@@ -764,9 +764,10 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    const APP_VERSION = 7;
+    const APP_VERSION = 8;
     const STORAGE_KEY = "wedding-memo-2026-11-13-v5";
     const CLOUD_CONFIG_KEY = "wedding-memo-cloud-config-v1";
+    const CLIENT_ID_KEY = "wedding-memo-client-id-v1";
     const DEFAULT_CLOUD_CONFIG = {
       docId: "wedding-2026-11-13",
       firebaseConfig: {
@@ -784,6 +785,9 @@
     let unsubscribeCloud = null;
     let suppressAutoSave = false;
     let saveTimer = null;
+    let pendingRemoteData = null;
+    const CLIENT_ID = localStorage.getItem(CLIENT_ID_KEY) || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+    localStorage.setItem(CLIENT_ID_KEY, CLIENT_ID);
 
     function updateCountdown() {
       const wedding = new Date("2026-11-13T00:00:00+08:00");
@@ -914,10 +918,25 @@
       appClone.querySelectorAll("#timeline").forEach(timeline => timeline.removeAttribute("data-selected-index"));
       return {
         appVersion: APP_VERSION,
+        clientId: CLIENT_ID,
         savedAt: new Date().toLocaleString("zh-CN"),
         html: appClone.innerHTML,
         header: Object.fromEntries([...document.querySelectorAll("[data-key]")].map(el => [el.dataset.key, el.innerHTML]))
       };
+    }
+
+    function isEditingContent() {
+      const active = document.activeElement;
+      if (!active) return false;
+      return active.matches("input, textarea, select, [contenteditable='true']");
+    }
+
+    function applyRemoteData(remote) {
+      suppressAutoSave = true;
+      applyData(remote);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+      setCloudStatus("online", "云端实时同步");
+      setTimeout(() => { suppressAutoSave = false; }, 300);
     }
 
     function applyData(data) {
@@ -1428,20 +1447,34 @@
       cloudRef = doc(db, "weddingMemos", config.docId || "wedding-2026-11-13");
       setCloudStatus("warn", "正在连接云端");
       unsubscribeCloud = onSnapshot(cloudRef, snap => {
+        if (snap.metadata.hasPendingWrites) return;
         if (!snap.exists()) { save().catch(console.error); return; }
         const remote = snap.data().memo;
         if (!remote) return;
         const needsUpgrade = remote.appVersion !== APP_VERSION;
-        suppressAutoSave = true;
-        applyData(remote);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
-        setCloudStatus("online", "云端实时同步");
-        setTimeout(() => {
-          suppressAutoSave = false;
-          if (needsUpgrade) save().catch(console.error);
-        }, 300);
+        if (remote.clientId === CLIENT_ID && !needsUpgrade) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+          setCloudStatus("online", "云端已保存");
+          return;
+        }
+        if (isEditingContent() && !needsUpgrade) {
+          pendingRemoteData = remote;
+          setCloudStatus("warn", "云端有更新，结束编辑后同步");
+          return;
+        }
+        applyRemoteData(remote);
+        if (needsUpgrade) save().catch(console.error);
       }, () => setCloudStatus("warn", "云端连接失败"));
     }
+
+    document.addEventListener("focusout", () => {
+      setTimeout(() => {
+        if (!pendingRemoteData || isEditingContent()) return;
+        const remote = pendingRemoteData;
+        pendingRemoteData = null;
+        applyRemoteData(remote);
+      }, 0);
+    });
 
     async function connectFromModal() {
       try {
