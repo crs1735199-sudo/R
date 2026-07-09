@@ -377,6 +377,24 @@
       gap: 10px;
     }
 
+    .timeline-tools, .planner-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 10px;
+    }
+
+    .timeline-tools.locked .timeline-edit-action {
+      display: none;
+    }
+
+    .timeline-position {
+      color: var(--muted);
+      font-size: 13px;
+      margin-right: auto;
+    }
+
     .item {
       display: grid;
       grid-template-columns: 160px 110px 1fr 220px;
@@ -386,6 +404,11 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fffdfb;
+    }
+
+    .item-selected {
+      box-shadow: inset 0 0 0 2px rgba(166, 82, 73, 0.22);
+      background: #fff8f1;
     }
 
     .date-block {
@@ -404,6 +427,44 @@
     }
 
     .small { color: var(--muted); font-size: 13px; }
+
+    .guest-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdfb;
+      padding: 10px 12px;
+    }
+
+    .summary-card .num {
+      display: block;
+      margin-top: 4px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .guest-planner .note {
+      margin-bottom: 12px;
+    }
+
+    .guest-table th:nth-child(1) { width: 96px; }
+    .guest-table th:nth-child(2) { width: 80px; }
+    .guest-table th:nth-child(3) { width: 88px; }
+    .guest-table th:nth-child(4) { width: 88px; }
+    .guest-table th:nth-child(5) { width: 70px; }
+    .guest-table th:nth-child(6) { width: 90px; }
+    .guest-table th:nth-child(7) { width: 90px; }
+    .guest-table th:nth-child(8) { width: 90px; }
+    .guest-table th:nth-child(9) { width: 80px; }
+    .guest-table th:nth-child(10) { width: 180px; }
+
     .checkline {
       display: flex;
       gap: 8px;
@@ -507,7 +568,7 @@
       <section class="view active" data-view="overview" data-title="总览">
         <h2>总览</h2>
         <div class="body">
-          <div class="note">状态用下拉选择，日期用日历选择。表格右上角可加行、加列；内容会自动保存到本地，配置 Firebase 后同步到云端。</div>
+          <div class="note">状态用下拉选择，日期用日历选择。表格默认锁定，解锁后可按当前行列加行、加列、删行、删列；内容会自动保存到云端。</div>
           <table data-table="overview">
             <thead><tr><th style="width:110px;">状态</th><th>事项</th><th style="width:150px;">负责人</th><th style="width:160px;">截止/时间</th><th>备注</th></tr></thead>
             <tbody>
@@ -527,6 +588,13 @@
       <section class="view" data-view="timeline" data-title="重点节点">
         <h2>重点时间节点</h2>
         <div class="body">
+          <div class="timeline-tools locked" id="timelineTools">
+            <span class="timeline-position">当前：第 1 个节点</span>
+            <button type="button" class="mini-btn lock-btn" id="timelineLockBtn">解锁编辑</button>
+            <button type="button" class="mini-btn timeline-edit-action" id="addTaskBeforeBtn">上方加节点</button>
+            <button type="button" class="mini-btn timeline-edit-action" id="addTaskAfterBtn">下方加节点</button>
+            <button type="button" class="mini-btn danger-btn timeline-edit-action" id="deleteTaskBtn">删当前节点</button>
+          </div>
           <div class="timeline" id="timeline">
             <div class="item"><div class="date-block"><input type="date" value="2026-07-12"></div><div><span class="tag">婚纱照</span></div><div contenteditable="true">去大视觉店里过合同，并大致确认外景。</div><div class="small" contenteditable="true">确认套餐、底片保底、外景、车和门票、选片授权。</div></div>
             <div class="item"><div class="date-block"><input type="date" value="2026-08-15"></div><div><span class="tag">婚礼团队</span></div><div contenteditable="true">填好摄影、摄像、化妆、服装里比较满意的老师。</div><div class="small" contenteditable="true">避免临近婚礼被动安排。</div></div>
@@ -536,7 +604,6 @@
             <div class="item"><div class="date-block"><input type="date" value="2026-10-13"></div><div><span class="tag">付款</span></div><div contenteditable="true">支付婚宴前一个月 60% 款项：38270 元。</div><div class="small" contenteditable="true">以合同和酒店实际通知为准。</div></div>
             <div class="item"><div class="date-block"><input type="date" value="2026-10-30"></div><div><span class="tag">菜单</span></div><div contenteditable="true">到店确认婚宴菜单。</div><div class="small" contenteditable="true">合同写明提前 15 天到店确认菜单。</div></div>
           </div>
-          <div class="table-tools" style="margin-top:10px;"><button class="mini-btn" id="addTaskBtn">新增节点</button></div>
         </div>
       </section>
 
@@ -649,16 +716,30 @@
 
       <section class="view" data-view="guests" data-title="宾客名单">
         <h2>宾客名单</h2>
-        <div class="body">
-          <table data-table="guests">
-            <thead><tr><th>姓名</th><th>关系</th><th>邀请方</th><th>是否到场</th><th>是否带家属</th><th>桌号</th><th>备注</th></tr></thead>
-            <tbody><tr><td contenteditable="true">待填写</td><td contenteditable="true">待填写</td><td contenteditable="true">新郎/新娘/双方</td><td contenteditable="true">待确认</td><td contenteditable="true">待确认</td><td contenteditable="true">待排桌</td><td contenteditable="true"></td></tr></tbody>
+        <div class="body guest-planner">
+          <div class="note">用于电子请帖回收信息：人数、关系、分组、希望同桌、避免同桌。点“自动分桌”后会尽量按邀请方和关系分组，优先照顾希望同桌，避开不适合同桌的人。</div>
+          <div class="guest-summary" id="guestSummary">
+            <div class="summary-card">确认到场<span class="num" data-guest-stat="confirmed">0</span></div>
+            <div class="summary-card">预计人数<span class="num" data-guest-stat="people">0</span></div>
+            <div class="summary-card">预计桌数<span class="num" data-guest-stat="tables">0</span></div>
+            <div class="summary-card">待确认<span class="num" data-guest-stat="pending">0</span></div>
+          </div>
+          <div class="planner-tools">
+            <button type="button" class="mini-btn primary" id="autoSeatBtn">自动分桌</button>
+            <button type="button" class="mini-btn" id="clearSeatBtn">清空桌号</button>
+            <span class="small">建议每桌 10 人；人数列可填 1、2、3 等。</span>
+          </div>
+          <table data-table="guests" class="guest-table">
+            <thead><tr><th>姓名</th><th>人数</th><th>关系</th><th>邀请方</th><th>到场</th><th>分组</th><th>希望同桌</th><th>避免同桌</th><th>桌号</th><th>备注</th></tr></thead>
+            <tbody>
+              <tr><td contenteditable="true">待填写</td><td contenteditable="true">1</td><td contenteditable="true">朋友</td><td contenteditable="true">新郎/新娘/双方</td><td><select><option selected>待确认</option><option>确认到场</option><option>不参加</option></select></td><td contenteditable="true">同学/同事/亲戚</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true">待排</td><td contenteditable="true"></td></tr>
+            </tbody>
           </table>
         </div>
       </section>
 
       <div class="footer">
-        当前版本：云端自动连接版 v2026-07-09-6。发布后建议使用 Firebase Hosting 链接访问；云端数据仍保存在 Firestore，同一个文档 ID 多设备同步。
+        当前版本：云端自动连接版 v2026-07-09-7。发布后建议使用 Firebase Hosting 链接访问；云端数据仍保存在 Firestore，同一个文档 ID 多设备同步。
       </div>
     </main>
   </div>
@@ -816,11 +897,21 @@
       appClone.querySelectorAll(".table-tools").forEach(el => el.remove());
       appClone.querySelectorAll(".row-selected").forEach(el => el.classList.remove("row-selected"));
       appClone.querySelectorAll(".col-selected").forEach(el => el.classList.remove("col-selected"));
+      appClone.querySelectorAll(".item-selected").forEach(el => el.classList.remove("item-selected"));
+      appClone.querySelectorAll(".timeline-tools").forEach(el => {
+        el.classList.add("locked");
+        const btn = el.querySelector(".lock-btn");
+        if (btn) {
+          btn.classList.remove("unlocked");
+          btn.textContent = "解锁编辑";
+        }
+      });
       appClone.querySelectorAll("table").forEach(table => {
         table.removeAttribute("data-edit-unlocked");
         table.removeAttribute("data-selected-row");
         table.removeAttribute("data-selected-col");
       });
+      appClone.querySelectorAll("#timeline").forEach(timeline => timeline.removeAttribute("data-selected-index"));
       return {
         appVersion: APP_VERSION,
         savedAt: new Date().toLocaleString("zh-CN"),
@@ -879,11 +970,71 @@
       reader.readAsText(file, "utf-8");
     }
 
-    function addTask() {
+    function ensureTimelineTools() {
+      const body = document.querySelector('[data-view="timeline"] .body');
+      const timeline = document.getElementById("timeline");
+      if (!body || !timeline) return null;
+      let tools = document.getElementById("timelineTools");
+      document.querySelectorAll("#addTaskBtn").forEach(btn => btn.parentElement?.remove());
+      if (!tools) {
+        tools = document.createElement("div");
+        tools.className = "timeline-tools locked";
+        tools.id = "timelineTools";
+        tools.innerHTML = '<span class="timeline-position">当前：第 1 个节点</span><button type="button" class="mini-btn lock-btn" id="timelineLockBtn">解锁编辑</button><button type="button" class="mini-btn timeline-edit-action" id="addTaskBeforeBtn">上方加节点</button><button type="button" class="mini-btn timeline-edit-action" id="addTaskAfterBtn">下方加节点</button><button type="button" class="mini-btn danger-btn timeline-edit-action" id="deleteTaskBtn">删当前节点</button>';
+        body.insertBefore(tools, timeline);
+      }
+      return tools;
+    }
+
+    function getSelectedTaskIndex() {
+      const timeline = document.getElementById("timeline");
+      const count = timeline?.querySelectorAll(".item").length || 0;
+      let index = Number(timeline?.dataset.selectedIndex || 0);
+      index = Math.max(0, Math.min(index, Math.max(count - 1, 0)));
+      if (timeline) timeline.dataset.selectedIndex = String(index);
+      return index;
+    }
+
+    function markTimelinePosition() {
+      const timeline = document.getElementById("timeline");
+      const items = [...(timeline?.querySelectorAll(".item") || [])];
+      const index = getSelectedTaskIndex();
+      items.forEach((item, itemIndex) => item.classList.toggle("item-selected", itemIndex === index));
+      const label = document.querySelector("#timelineTools .timeline-position");
+      if (label) label.textContent = `当前：第 ${index + 1} 个节点`;
+    }
+
+    function makeTaskItem() {
       const item = document.createElement("div");
       item.className = "item";
       item.innerHTML = '<div class="date-block"><input type="date"></div><div><span class="tag" contenteditable="true">新事项</span></div><div contenteditable="true">填写重点事项。</div><div class="small" contenteditable="true">填写备注。</div>';
-      document.getElementById("timeline").appendChild(item);
+      return item;
+    }
+
+    function addTask(place = "after") {
+      const timeline = document.getElementById("timeline");
+      if (!timeline) return;
+      const items = [...timeline.querySelectorAll(".item")];
+      const selectedIndex = getSelectedTaskIndex();
+      const insertIndex = place === "before" ? selectedIndex : selectedIndex + 1;
+      const item = makeTaskItem();
+      timeline.insertBefore(item, items[insertIndex] || null);
+      timeline.dataset.selectedIndex = String(Math.min(insertIndex, items.length));
+      bindEvents();
+      queueSave();
+    }
+
+    function deleteTask() {
+      const timeline = document.getElementById("timeline");
+      const items = [...(timeline?.querySelectorAll(".item") || [])];
+      if (items.length <= 1) {
+        alert("至少保留一个重点节点。");
+        return;
+      }
+      const index = getSelectedTaskIndex();
+      if (!confirm(`确定删除第 ${index + 1} 个重点节点吗？`)) return;
+      items[index].remove();
+      timeline.dataset.selectedIndex = String(Math.max(0, index - 1));
       bindEvents();
       queueSave();
     }
@@ -903,7 +1054,20 @@
 
     function makeTableCell(table, colIndex) {
       const cell = document.createElement("td");
-      if (colIndex === 0 && table.querySelector(".status-select")) {
+      if (table.dataset.table === "guests") {
+        if (colIndex === 1) {
+          cell.contentEditable = "true";
+          cell.textContent = "1";
+        } else if (colIndex === 4) {
+          cell.innerHTML = '<select><option selected>待确认</option><option>确认到场</option><option>不参加</option></select>';
+        } else if (colIndex === 8) {
+          cell.contentEditable = "true";
+          cell.textContent = "待排";
+        } else {
+          cell.contentEditable = "true";
+          cell.textContent = "待填写";
+        }
+      } else if (colIndex === 0 && table.querySelector(".status-select")) {
         cell.innerHTML = '<select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select>';
       } else {
         cell.contentEditable = "true";
@@ -988,6 +1152,150 @@
       queueSave();
     }
 
+    function cellText(row, index) {
+      return (row.children[index]?.textContent || "").trim();
+    }
+
+    function selectCell(value, options) {
+      const normalized = value || options[0];
+      return `<select>${options.map(option => `<option${option === normalized ? " selected" : ""}>${option}</option>`).join("")}</select>`;
+    }
+
+    function normalizeGuestRow(row) {
+      if (row.children.length >= 10 && row.children[4]?.querySelector("select")) return;
+      const name = cellText(row, 0) || "待填写";
+      const relation = cellText(row, 1) || "朋友";
+      const inviter = cellText(row, 2) || "新郎/新娘/双方";
+      const attendance = cellText(row, 3) || "待确认";
+      const plusOne = cellText(row, 4);
+      const tableNo = cellText(row, 5) || "待排";
+      const note = cellText(row, 6);
+      const people = plusOne.includes("是") || plusOne.includes("带") ? "2" : "1";
+      row.innerHTML = `
+        <td contenteditable="true">${name}</td>
+        <td contenteditable="true">${people}</td>
+        <td contenteditable="true">${relation}</td>
+        <td contenteditable="true">${inviter}</td>
+        <td>${selectCell(attendance, ["待确认", "确认到场", "不参加"])}</td>
+        <td contenteditable="true">${relation}</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true">${tableNo}</td>
+        <td contenteditable="true">${note}</td>
+      `;
+    }
+
+    function ensureGuestPlanner() {
+      const section = document.querySelector('[data-view="guests"]');
+      const body = section?.querySelector(".body");
+      const table = section?.querySelector('table[data-table="guests"]');
+      if (!section || !body || !table) return;
+      body.classList.add("guest-planner");
+      table.classList.add("guest-table");
+      if (!body.querySelector("#guestSummary")) {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = `
+          <div class="note">用于电子请帖回收信息：人数、关系、分组、希望同桌、避免同桌。点“自动分桌”后会尽量按邀请方和关系分组，优先照顾希望同桌，避开不适合同桌的人。</div>
+          <div class="guest-summary" id="guestSummary">
+            <div class="summary-card">确认到场<span class="num" data-guest-stat="confirmed">0</span></div>
+            <div class="summary-card">预计人数<span class="num" data-guest-stat="people">0</span></div>
+            <div class="summary-card">预计桌数<span class="num" data-guest-stat="tables">0</span></div>
+            <div class="summary-card">待确认<span class="num" data-guest-stat="pending">0</span></div>
+          </div>
+          <div class="planner-tools">
+            <button type="button" class="mini-btn primary" id="autoSeatBtn">自动分桌</button>
+            <button type="button" class="mini-btn" id="clearSeatBtn">清空桌号</button>
+            <span class="small">建议每桌 10 人；人数列可填 1、2、3 等。</span>
+          </div>
+        `;
+        body.insertBefore(wrapper, table);
+      }
+      table.querySelector("thead").innerHTML = "<tr><th>姓名</th><th>人数</th><th>关系</th><th>邀请方</th><th>到场</th><th>分组</th><th>希望同桌</th><th>避免同桌</th><th>桌号</th><th>备注</th></tr>";
+      table.querySelectorAll("tbody tr").forEach(normalizeGuestRow);
+    }
+
+    function getGuestRows() {
+      return [...document.querySelectorAll('table[data-table="guests"] tbody tr')];
+    }
+
+    function guestNumber(row) {
+      const value = Number((row.children[1]?.textContent || "1").trim());
+      return Number.isFinite(value) && value > 0 ? value : 1;
+    }
+
+    function guestStatus(row) {
+      return row.children[4]?.querySelector("select")?.value || row.children[4]?.textContent.trim() || "待确认";
+    }
+
+    function updateGuestSummary() {
+      const rows = getGuestRows();
+      const meaningful = rows.filter(row => cellText(row, 0) && cellText(row, 0) !== "待填写");
+      const confirmedRows = meaningful.filter(row => guestStatus(row) === "确认到场");
+      const expectedRows = meaningful.filter(row => guestStatus(row) !== "不参加");
+      const pending = meaningful.filter(row => guestStatus(row) === "待确认").length;
+      const confirmed = confirmedRows.reduce((sum, row) => sum + guestNumber(row), 0);
+      const people = expectedRows.reduce((sum, row) => sum + guestNumber(row), 0);
+      const tables = people ? Math.ceil(people / 10) : 0;
+      const values = { confirmed, people, tables, pending };
+      Object.entries(values).forEach(([key, value]) => {
+        const el = document.querySelector(`[data-guest-stat="${key}"]`);
+        if (el) el.textContent = value;
+      });
+    }
+
+    function guestKey(row) {
+      return `${cellText(row, 3)}-${cellText(row, 5) || cellText(row, 2)}`;
+    }
+
+    function autoSeatGuests() {
+      const rows = getGuestRows().filter(row => cellText(row, 0) && cellText(row, 0) !== "待填写" && guestStatus(row) !== "不参加");
+      if (!rows.length) {
+        alert("请先填写宾客姓名和到场状态。");
+        return;
+      }
+      const groups = new Map();
+      rows.forEach(row => {
+        const key = guestKey(row);
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(row);
+      });
+      let tableNo = 1;
+      let tablePeople = 0;
+      const tableNames = new Map();
+      const assignRow = row => {
+        const people = guestNumber(row);
+        const avoid = cellText(row, 7);
+        const prefer = cellText(row, 6);
+        if (tablePeople > 0 && tablePeople + people > 10) {
+          tableNo++;
+          tablePeople = 0;
+        }
+        if (avoid && tableNames.get(tableNo)?.some(name => avoid.includes(name))) {
+          tableNo++;
+          tablePeople = 0;
+        }
+        if (prefer) {
+          const preferred = rows.find(candidate => cellText(candidate, 0) && prefer.includes(cellText(candidate, 0)));
+          const preferredTable = preferred?.children[8]?.textContent?.match(/\d+/)?.[0];
+          if (preferredTable) tableNo = Number(preferredTable);
+        }
+        row.children[8].textContent = `${tableNo}桌`;
+        tablePeople += people;
+        if (!tableNames.has(tableNo)) tableNames.set(tableNo, []);
+        tableNames.get(tableNo).push(cellText(row, 0));
+      };
+      [...groups.values()].forEach(group => group.forEach(assignRow));
+      updateGuestSummary();
+      queueSave();
+    }
+
+    function clearGuestSeats() {
+      getGuestRows().forEach(row => {
+        if (row.children[8]) row.children[8].textContent = "待排";
+      });
+      queueSave();
+    }
+
     function enhanceTables() {
       document.querySelectorAll("table").forEach(table => {
         const oldTools = table.previousElementSibling;
@@ -1028,8 +1336,43 @@
       });
     }
 
+    function enhanceTimeline() {
+      const timeline = document.getElementById("timeline");
+      const tools = ensureTimelineTools();
+      if (!timeline || !tools) return;
+      const lockBtn = document.getElementById("timelineLockBtn");
+      const updateLock = () => {
+        const unlocked = timeline.dataset.editUnlocked === "true";
+        tools.classList.toggle("locked", !unlocked);
+        lockBtn?.classList.toggle("unlocked", unlocked);
+        if (lockBtn) lockBtn.textContent = unlocked ? "锁定编辑" : "解锁编辑";
+      };
+      if (lockBtn) {
+        lockBtn.onclick = () => {
+          timeline.dataset.editUnlocked = timeline.dataset.editUnlocked === "true" ? "false" : "true";
+          updateLock();
+        };
+      }
+      const beforeBtn = document.getElementById("addTaskBeforeBtn");
+      const afterBtn = document.getElementById("addTaskAfterBtn");
+      const deleteBtn = document.getElementById("deleteTaskBtn");
+      if (beforeBtn) beforeBtn.onclick = () => addTask("before");
+      if (afterBtn) afterBtn.onclick = () => addTask("after");
+      if (deleteBtn) deleteBtn.onclick = deleteTask;
+      timeline.querySelectorAll(".item").forEach((item, index) => {
+        item.onclick = () => {
+          timeline.dataset.selectedIndex = String(index);
+          markTimelinePosition();
+        };
+      });
+      updateLock();
+      markTimelinePosition();
+    }
+
     function bindEvents() {
+      ensureGuestPlanner();
       enhanceTables();
+      enhanceTimeline();
       document.querySelectorAll(".status-select").forEach(select => {
         select.className = "status-select " + (statusClassMap[select.value] || "todo");
         select.onchange = () => {
@@ -1038,11 +1381,28 @@
         };
       });
       document.querySelectorAll("input, [contenteditable='true']").forEach(el => {
-        el.oninput = queueSave;
-        el.onchange = queueSave;
+        el.oninput = () => {
+          updateGuestSummary();
+          queueSave();
+        };
+        el.onchange = () => {
+          updateGuestSummary();
+          queueSave();
+        };
       });
-      const addTaskBtn = document.getElementById("addTaskBtn");
-      if (addTaskBtn) addTaskBtn.onclick = addTask;
+      document.querySelectorAll("select").forEach(select => {
+        const oldChange = select.onchange;
+        select.onchange = event => {
+          if (oldChange) oldChange.call(select, event);
+          updateGuestSummary();
+          queueSave();
+        };
+      });
+      const autoSeatBtn = document.getElementById("autoSeatBtn");
+      const clearSeatBtn = document.getElementById("clearSeatBtn");
+      if (autoSeatBtn) autoSeatBtn.onclick = autoSeatGuests;
+      if (clearSeatBtn) clearSeatBtn.onclick = clearGuestSeats;
+      updateGuestSummary();
     }
 
     function setCloudStatus(kind, text) {
