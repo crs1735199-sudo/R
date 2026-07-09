@@ -178,7 +178,7 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 14px;
     }
@@ -206,6 +206,12 @@
       font-weight: 750;
       word-break: break-word;
       overflow-wrap: anywhere;
+    }
+
+    .value.compact {
+      font-size: 17px;
+      line-height: 1.45;
+      font-weight: 720;
     }
 
     .view { display: none; overflow: hidden; }
@@ -560,9 +566,11 @@
 
       <div class="hero-grid">
         <div class="card"><div class="label">距离婚礼</div><div class="value" id="countdown">计算中</div></div>
-        <div class="card"><div class="label">当前阶段</div><div class="value" contenteditable="true" data-key="stage">婚礼前约 4 个月</div></div>
-        <div class="card"><div class="label">酒店 / 厅</div><div class="value" contenteditable="true" data-key="hotel">虔禧宴·太阳花厅</div></div>
-        <div class="card"><div class="label">保底桌数</div><div class="value" contenteditable="true" data-key="tables">30 桌 + 3 桌备用</div></div>
+        <div class="card"><div class="label">当前阶段</div><div class="value compact" contenteditable="true" data-key="stage">核心事项确认期</div></div>
+        <div class="card"><div class="label">正在推进</div><div class="value compact" contenteditable="true" data-key="currentFocus">婚纱照 / 老师团队 / 领证准备</div></div>
+        <div class="card"><div class="label">下一个动作</div><div class="value compact" contenteditable="true" data-key="nextAction">7.12 去大视觉过合同并确认外景</div></div>
+        <div class="card"><div class="label">已提前完成</div><div class="value compact" contenteditable="true" data-key="earlyDone">菜单确认</div></div>
+        <div class="card"><div class="label">需要盯紧</div><div class="value compact" contenteditable="true" data-key="watchItems">底片保底、外景费用、摄影摄像化妆老师</div></div>
       </div>
 
       <section class="view active" data-view="overview" data-title="总览">
@@ -574,7 +582,7 @@
             <tbody>
               <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">婚礼日期</td><td contenteditable="true">两人</td><td><input type="date" value="2026-11-13"></td><td contenteditable="true">2026-11-13</td></tr>
               <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">婚礼酒店</td><td contenteditable="true">两人</td><td contenteditable="true">已完成</td><td contenteditable="true">虔禧宴·宴会艺术酒店，太阳花厅</td></tr>
-              <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">菜品 / 餐标</td><td contenteditable="true">两人 + 酒店</td><td><input type="date" value="2026-10-30"></td><td contenteditable="true">1699 元 / 桌，菜单确认截止</td></tr>
+              <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">菜品 / 餐标</td><td contenteditable="true">两人 + 酒店</td><td><input type="date" value="2026-07-05"></td><td contenteditable="true">1699 元 / 桌，菜单已提前确认；原合同截止 2026-10-30</td></tr>
               <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">主持</td><td contenteditable="true">林希</td><td contenteditable="true">已完成</td><td contenteditable="true">后续沟通流程和串词</td></tr>
               <tr><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true">婚纱照</td><td contenteditable="true">两人 + 大视觉</td><td><input type="date" value="2026-08-24"></td><td contenteditable="true">7.12 去店里过合同并确认外景</td></tr>
               <tr><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true">摄影/摄像/化妆/服装老师</td><td contenteditable="true">两人</td><td><input type="date" value="2026-08-15"></td><td contenteditable="true">填写比较满意的老师</td></tr>
@@ -602,7 +610,7 @@
             <div class="item"><div class="date-block"><input type="date" value="2026-08-31"></div><div><span class="tag">领证准备</span></div><div contenteditable="true">准备并拍好领证用证件照。</div><div class="small" contenteditable="true">同时确认领证穿搭。</div></div>
             <div class="item"><div class="date-block"><input type="date" value="2026-09-09"></div><div><span class="tag">领证</span></div><div contenteditable="true">计划领证。</div><div class="small" contenteditable="true">提前确认预约、证件、户口本、照片。</div></div>
             <div class="item"><div class="date-block"><input type="date" value="2026-10-13"></div><div><span class="tag">付款</span></div><div contenteditable="true">支付婚宴前一个月 60% 款项：38270 元。</div><div class="small" contenteditable="true">以合同和酒店实际通知为准。</div></div>
-            <div class="item"><div class="date-block"><input type="date" value="2026-10-30"></div><div><span class="tag">菜单</span></div><div contenteditable="true">到店确认婚宴菜单。</div><div class="small" contenteditable="true">合同写明提前 15 天到店确认菜单。</div></div>
+            <div class="item"><div class="date-block"><input type="date" value="2026-07-05"></div><div><span class="tag">菜单确认</span></div><div contenteditable="true">婚宴菜单已确认。</div><div class="small" contenteditable="true">原合同要求 2026-10-30 前确认，已提前完成。</div></div>
           </div>
         </div>
       </section>
@@ -676,8 +684,8 @@
               <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">开餐前确定桌数后结清约 20%</div><div class="field-label">截止</div><div><input type="date" value="2026-11-13"></div><div class="field-label">备注</div><div contenteditable="true">开餐前结清</div></div>
             </article>
             <article class="record-card">
-              <div class="record-head"><div class="record-title" contenteditable="true">菜单确认</div><div class="amount" contenteditable="true">待确认</div></div>
-              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">到店确认婚宴菜单</div><div class="field-label">截止</div><div><input type="date" value="2026-10-30"></div><div class="field-label">备注</div><div contenteditable="true">合同提示提前 15 天确认</div></div>
+              <div class="record-head"><div class="record-title" contenteditable="true">菜单确认</div><div class="amount" contenteditable="true">已完成</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">婚宴菜单已确认</div><div class="field-label">完成</div><div><input type="date" value="2026-07-05"></div><div class="field-label">备注</div><div contenteditable="true">原合同要求 2026-10-30 前确认，已提前完成</div></div>
             </article>
           </div>
         </div>
@@ -739,7 +747,7 @@
       </section>
 
       <div class="footer">
-        当前版本：云端自动连接版 v2026-07-09-8。发布后建议使用 Firebase Hosting 链接访问；云端数据仍保存在 Firestore，同一个文档 ID 多设备同步。
+        当前版本：云端自动连接版 v2026-07-09-9。发布后建议使用 Firebase Hosting 链接访问；云端数据仍保存在 Firestore，同一个文档 ID 多设备同步。
       </div>
     </main>
   </div>
@@ -764,7 +772,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    const APP_VERSION = 8;
+    const APP_VERSION = 9;
     const STORAGE_KEY = "wedding-memo-2026-11-13-v5";
     const CLOUD_CONFIG_KEY = "wedding-memo-cloud-config-v1";
     const CLIENT_ID_KEY = "wedding-memo-client-id-v1";
@@ -943,7 +951,8 @@
       if (!data) return;
       if (data.html && data.appVersion === APP_VERSION) document.getElementById("app").innerHTML = data.html;
       if (data.header) {
-        Object.entries(data.header).forEach(([key, html]) => {
+        const entries = data.appVersion === APP_VERSION ? Object.entries(data.header) : Object.entries(data.header).filter(([key]) => ["title", "weddingDate", "city"].includes(key));
+        entries.forEach(([key, html]) => {
           const el = document.querySelector(`[data-key="${key}"]`);
           if (el) el.innerHTML = html;
         });
