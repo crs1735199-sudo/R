@@ -287,14 +287,41 @@
     .table-tools {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       gap: 8px;
       margin-bottom: 8px;
       flex-wrap: wrap;
     }
 
+    .table-tools.locked .table-edit-action {
+      display: none;
+    }
+
+    .table-position {
+      color: var(--muted);
+      font-size: 13px;
+      margin-right: auto;
+    }
+
     .mini-btn {
       padding: 6px 9px;
       font-size: 13px;
+    }
+
+    .lock-btn.unlocked {
+      background: #fff2df;
+      border-color: #e0b06d;
+      color: #87520c;
+    }
+
+    .row-selected > td {
+      box-shadow: inset 0 0 0 2px rgba(166, 82, 73, 0.22);
+      background: #fff8f1;
+    }
+
+    .col-selected {
+      box-shadow: inset 0 0 0 2px rgba(166, 82, 73, 0.18);
+      background: #fff9f4;
     }
 
     .record-grid {
@@ -785,10 +812,19 @@
 
     function serialize() {
       syncFormAttributes();
+      const appClone = document.getElementById("app").cloneNode(true);
+      appClone.querySelectorAll(".table-tools").forEach(el => el.remove());
+      appClone.querySelectorAll(".row-selected").forEach(el => el.classList.remove("row-selected"));
+      appClone.querySelectorAll(".col-selected").forEach(el => el.classList.remove("col-selected"));
+      appClone.querySelectorAll("table").forEach(table => {
+        table.removeAttribute("data-edit-unlocked");
+        table.removeAttribute("data-selected-row");
+        table.removeAttribute("data-selected-col");
+      });
       return {
         appVersion: APP_VERSION,
         savedAt: new Date().toLocaleString("zh-CN"),
-        html: document.getElementById("app").innerHTML,
+        html: appClone.innerHTML,
         header: Object.fromEntries([...document.querySelectorAll("[data-key]")].map(el => [el.dataset.key, el.innerHTML]))
       };
     }
@@ -852,37 +888,71 @@
       queueSave();
     }
 
-    function addTableRow(table) {
-      const colCount = table.querySelector("thead tr")?.children.length || 1;
-      const row = table.tBodies[0].insertRow();
-      for (let i = 0; i < colCount; i++) {
-        const cell = row.insertCell();
-        if (i === 0 && table.querySelector(".status-select")) {
-          cell.innerHTML = '<select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select>';
-        } else {
-          cell.contentEditable = "true";
-          cell.textContent = "待填写";
-        }
+    function getTablePosition(table) {
+      const tbody = table.tBodies[0];
+      const rowCount = tbody?.rows.length || 0;
+      const colCount = table.querySelector("thead tr")?.children.length || table.rows[0]?.children.length || 0;
+      let row = Number(table.dataset.selectedRow || 0);
+      let col = Number(table.dataset.selectedCol || 0);
+      row = Math.max(0, Math.min(row, Math.max(rowCount - 1, 0)));
+      col = Math.max(0, Math.min(col, Math.max(colCount - 1, 0)));
+      table.dataset.selectedRow = String(row);
+      table.dataset.selectedCol = String(col);
+      return { row, col, rowCount, colCount };
+    }
+
+    function makeTableCell(table, colIndex) {
+      const cell = document.createElement("td");
+      if (colIndex === 0 && table.querySelector(".status-select")) {
+        cell.innerHTML = '<select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select>';
+      } else {
+        cell.contentEditable = "true";
+        cell.textContent = "待填写";
       }
+      return cell;
+    }
+
+    function markTablePosition(table) {
+      const { row, col } = getTablePosition(table);
+      table.querySelectorAll("tr").forEach(tr => tr.classList.remove("row-selected"));
+      table.querySelectorAll("th, td").forEach(cell => cell.classList.remove("col-selected"));
+      const tbodyRow = table.tBodies[0]?.rows[row];
+      if (tbodyRow) tbodyRow.classList.add("row-selected");
+      table.querySelectorAll("tr").forEach(tr => {
+        if (tr.children[col]) tr.children[col].classList.add("col-selected");
+      });
+      const label = table.previousElementSibling?.querySelector(".table-position");
+      if (label) label.textContent = `当前：第 ${row + 1} 行 / 第 ${col + 1} 列`;
+    }
+
+    function addTableRow(table, place = "after") {
+      const colCount = table.querySelector("thead tr")?.children.length || 1;
+      const { row: selectedRow, rowCount } = getTablePosition(table);
+      const insertIndex = place === "before" ? selectedRow : selectedRow + 1;
+      const row = table.tBodies[0].insertRow(Math.min(insertIndex, rowCount));
+      for (let i = 0; i < colCount; i++) {
+        row.appendChild(makeTableCell(table, i));
+      }
+      table.dataset.selectedRow = String(Math.min(insertIndex, rowCount));
       bindEvents();
       queueSave();
     }
 
-    function addTableColumn(table) {
+    function addTableColumn(table, place = "after") {
       const header = table.querySelector("thead tr");
-      const index = header ? header.children.length + 1 : 1;
+      const { col: selectedCol, colCount } = getTablePosition(table);
+      const insertIndex = place === "before" ? selectedCol : selectedCol + 1;
       if (header) {
         const th = document.createElement("th");
         th.contentEditable = "true";
-        th.textContent = "新增列" + index;
-        header.appendChild(th);
+        th.textContent = "新增列" + (insertIndex + 1);
+        header.insertBefore(th, header.children[insertIndex] || null);
       }
       table.querySelectorAll("tbody tr").forEach(row => {
-        const td = document.createElement("td");
-        td.contentEditable = "true";
-        td.textContent = "待填写";
-        row.appendChild(td);
+        row.insertBefore(makeTableCell(table, insertIndex), row.children[insertIndex] || null);
       });
+      table.dataset.selectedCol = String(Math.min(insertIndex, colCount));
+      bindEvents();
       queueSave();
     }
 
@@ -892,8 +962,11 @@
         alert("至少保留一行。");
         return;
       }
-      if (!confirm("确定删除最后一行吗？")) return;
-      tbody.deleteRow(tbody.rows.length - 1);
+      const { row } = getTablePosition(table);
+      if (!confirm(`确定删除第 ${row + 1} 行吗？`)) return;
+      tbody.deleteRow(row);
+      table.dataset.selectedRow = String(Math.max(0, row - 1));
+      bindEvents();
       queueSave();
     }
 
@@ -904,12 +977,14 @@
         alert("至少保留一列。");
         return;
       }
-      if (!confirm("确定删除最后一列吗？")) return;
-      const lastIndex = colCount - 1;
-      if (header) header.deleteCell(lastIndex);
+      const { col } = getTablePosition(table);
+      if (!confirm(`确定删除第 ${col + 1} 列吗？`)) return;
+      if (header) header.deleteCell(col);
       table.querySelectorAll("tbody tr").forEach(row => {
-        if (row.children[lastIndex]) row.deleteCell(lastIndex);
+        if (row.children[col]) row.deleteCell(col);
       });
+      table.dataset.selectedCol = String(Math.max(0, col - 1));
+      bindEvents();
       queueSave();
     }
 
@@ -919,13 +994,37 @@
         if (oldTools?.classList.contains("table-tools")) oldTools.remove();
         const tools = document.createElement("div");
         tools.className = "table-tools";
-        tools.innerHTML = '<button type="button" class="mini-btn">加行</button><button type="button" class="mini-btn">加列</button><button type="button" class="mini-btn danger-btn">删行</button><button type="button" class="mini-btn danger-btn">删列</button>';
-        const [rowBtn, colBtn, delRowBtn, delColBtn] = tools.querySelectorAll("button");
-        rowBtn.onclick = () => addTableRow(table);
-        colBtn.onclick = () => addTableColumn(table);
+        tools.classList.toggle("locked", table.dataset.editUnlocked !== "true");
+        tools.innerHTML = '<span class="table-position">当前：第 1 行 / 第 1 列</span><button type="button" class="mini-btn lock-btn">解锁编辑</button><button type="button" class="mini-btn table-edit-action">上方加行</button><button type="button" class="mini-btn table-edit-action">下方加行</button><button type="button" class="mini-btn table-edit-action">左侧加列</button><button type="button" class="mini-btn table-edit-action">右侧加列</button><button type="button" class="mini-btn danger-btn table-edit-action">删当前行</button><button type="button" class="mini-btn danger-btn table-edit-action">删当前列</button>';
+        const [lockBtn, rowBeforeBtn, rowAfterBtn, colBeforeBtn, colAfterBtn, delRowBtn, delColBtn] = tools.querySelectorAll("button");
+        const updateLock = () => {
+          const unlocked = table.dataset.editUnlocked === "true";
+          tools.classList.toggle("locked", !unlocked);
+          lockBtn.classList.toggle("unlocked", unlocked);
+          lockBtn.textContent = unlocked ? "锁定编辑" : "解锁编辑";
+        };
+        lockBtn.onclick = () => {
+          table.dataset.editUnlocked = table.dataset.editUnlocked === "true" ? "false" : "true";
+          updateLock();
+        };
+        rowBeforeBtn.onclick = () => addTableRow(table, "before");
+        rowAfterBtn.onclick = () => addTableRow(table, "after");
+        colBeforeBtn.onclick = () => addTableColumn(table, "before");
+        colAfterBtn.onclick = () => addTableColumn(table, "after");
         delRowBtn.onclick = () => deleteTableRow(table);
         delColBtn.onclick = () => deleteTableColumn(table);
         table.parentElement.insertBefore(tools, table);
+        table.querySelectorAll("th, td").forEach(cell => {
+          cell.onclick = () => {
+            table.dataset.selectedCol = String(cell.cellIndex);
+            if (cell.parentElement.parentElement.tagName === "TBODY") {
+              table.dataset.selectedRow = String(cell.parentElement.rowIndex - 1);
+            }
+            markTablePosition(table);
+          };
+        });
+        updateLock();
+        markTablePosition(table);
       });
     }
 
