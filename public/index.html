@@ -1,0 +1,1035 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>备婚备忘录｜2026-11-13</title>
+  <style>
+    :root {
+      --bg: #f5f3ef;
+      --panel: #fff;
+      --ink: #24211d;
+      --muted: #6d665e;
+      --line: #ddd7cf;
+      --accent: #9f4f46;
+      --green: #2f7565;
+      --amber: #b56a1f;
+      --soft: #f2e7df;
+      --done: #e7f3ed;
+      --doing: #fff3dd;
+      --todo: #eef1f6;
+      --shadow: 0 10px 30px rgba(55, 45, 34, .08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245, 243, 239, .94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 32px);
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button, .file-label {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 8px 11px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    input[type="file"] { display: none; }
+    button:hover, .file-label:hover { filter: brightness(.98); }
+
+    .cloud-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9a9288;
+    }
+    .dot.online { background: var(--green); }
+    .dot.warn { background: var(--amber); }
+
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    nav {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 10px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      margin: 3px 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+      border-radius: 6px;
+      padding: 9px 10px;
+      color: var(--muted);
+    }
+
+    .nav-btn.active {
+      background: var(--soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .nav-tools {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .nav-tools button {
+      width: 100%;
+      box-shadow: none;
+    }
+
+    .danger-btn {
+      color: #8c3327;
+      border-color: #e6bbb4;
+      background: #fff7f5;
+    }
+
+    .mobile-nav {
+      display: none;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      font: inherit;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .card, .view {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 14px;
+      min-height: 92px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .value {
+      margin-top: 6px;
+      font-size: 22px;
+      font-weight: 750;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .view { display: none; overflow: hidden; }
+    .view.active { display: block; }
+    .view h2 {
+      margin: 0;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfaf8;
+      font-size: 18px;
+    }
+
+    .body { padding: 14px 16px 16px; }
+    .note {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: var(--soft);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      color: #4f4038;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      vertical-align: top;
+      word-break: break-word;
+      min-height: 38px;
+    }
+
+    th {
+      background: #f4f0eb;
+      color: #4a423c;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    td[contenteditable="true"], th[contenteditable="true"], [contenteditable="true"] {
+      outline: none;
+      border-radius: 4px;
+    }
+
+    td[contenteditable="true"]:focus, th[contenteditable="true"]:focus, [contenteditable="true"]:focus {
+      box-shadow: inset 0 0 0 2px rgba(159, 79, 70, .25);
+      background: #fffdf9;
+    }
+
+    select, input[type="date"], input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 8px;
+      font: inherit;
+      color: var(--ink);
+      background: #fffdf9;
+    }
+
+    input[type="date"] { min-width: 0; max-width: 160px; cursor: pointer; }
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      font-family: Consolas, "Microsoft YaHei", monospace;
+      font-size: 13px;
+    }
+
+    .status-select { font-weight: 700; cursor: pointer; }
+    .done { background: var(--done); color: #27604c; }
+    .doing { background: var(--doing); color: #86530e; }
+    .todo { background: var(--todo); color: #485466; }
+
+    .table-tools {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 6px 9px;
+      font-size: 13px;
+    }
+
+    .record-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .record-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdfb;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .record-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .record-title {
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .amount {
+      font-weight: 800;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .record-fields {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 8px 10px;
+      align-items: start;
+      font-size: 14px;
+    }
+
+    .field-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 160px 110px 1fr 220px;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdfb;
+    }
+
+    .date-block {
+      display: grid;
+      gap: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: #6d453f;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .small { color: var(--muted); font-size: 13px; }
+    .checkline {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .checkline:last-child { border-bottom: 0; }
+    .checkline input { margin-top: 5px; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(36, 33, 29, .38);
+    }
+    .modal.open { display: flex; }
+    .dialog {
+      width: min(760px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
+    }
+    .dialog h2 { margin: 0; padding: 14px 16px; border-bottom: 1px solid var(--line); font-size: 18px; }
+    .dialog-body { padding: 14px 16px 16px; }
+    .field { margin: 12px 0; }
+    .field label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 13px; }
+    .dialog-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 12px; }
+    .footer { color: var(--muted); font-size: 13px; padding: 18px 0 30px; }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { display: none; }
+      .mobile-nav { display: block; margin-bottom: 12px; }
+      .hero-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .item { grid-template-columns: 1fr; }
+      .record-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .topbar { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
+      .layout { padding: 12px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .body { overflow-x: auto; padding: 12px; }
+      table { min-width: 780px; }
+    }
+
+    @media print {
+      header, nav, .mobile-nav, .table-tools, .modal, .footer { display: none; }
+      body { background: #fff; }
+      .layout { display: block; padding: 0; max-width: none; }
+      .view { display: block; box-shadow: none; margin: 12px 0; }
+      .card { box-shadow: none; }
+      .record-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div>
+        <h1 contenteditable="true" data-key="title">备婚备忘录</h1>
+        <div class="sub">
+          婚礼：<span contenteditable="true" data-key="weddingDate">2026-11-13</span>　
+          地点：<span contenteditable="true" data-key="city">江西赣州</span>　
+          最近更新：<span id="savedAt">尚未保存</span>
+        </div>
+      </div>
+      <div class="actions">
+        <span class="cloud-pill"><span class="dot warn" id="cloudDot"></span><span id="cloudStatus">正在连接云端</span></span>
+        <button id="cloudBtn">云端设置</button>
+        <button class="primary" id="saveBtn">保存</button>
+        <button id="exportBtn">导出备份</button>
+        <label class="file-label" for="importFile">导入备份</label>
+        <input id="importFile" type="file" accept="application/json">
+        <button id="printBtn">打印 / 存 PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav id="sideNav"></nav>
+    <main id="app">
+      <select class="mobile-nav" id="mobileNav"></select>
+
+      <div class="hero-grid">
+        <div class="card"><div class="label">距离婚礼</div><div class="value" id="countdown">计算中</div></div>
+        <div class="card"><div class="label">当前阶段</div><div class="value" contenteditable="true" data-key="stage">婚礼前约 4 个月</div></div>
+        <div class="card"><div class="label">酒店 / 厅</div><div class="value" contenteditable="true" data-key="hotel">虔禧宴·太阳花厅</div></div>
+        <div class="card"><div class="label">保底桌数</div><div class="value" contenteditable="true" data-key="tables">30 桌 + 3 桌备用</div></div>
+      </div>
+
+      <section class="view active" data-view="overview" data-title="总览">
+        <h2>总览</h2>
+        <div class="body">
+          <div class="note">状态用下拉选择，日期用日历选择。表格右上角可加行、加列；内容会自动保存到本地，配置 Firebase 后同步到云端。</div>
+          <table data-table="overview">
+            <thead><tr><th style="width:110px;">状态</th><th>事项</th><th style="width:150px;">负责人</th><th style="width:160px;">截止/时间</th><th>备注</th></tr></thead>
+            <tbody>
+              <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">婚礼日期</td><td contenteditable="true">两人</td><td><input type="date" value="2026-11-13"></td><td contenteditable="true">2026-11-13</td></tr>
+              <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">婚礼酒店</td><td contenteditable="true">两人</td><td contenteditable="true">已完成</td><td contenteditable="true">虔禧宴·宴会艺术酒店，太阳花厅</td></tr>
+              <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">菜品 / 餐标</td><td contenteditable="true">两人 + 酒店</td><td><input type="date" value="2026-10-30"></td><td contenteditable="true">1699 元 / 桌，菜单确认截止</td></tr>
+              <tr><td><select class="status-select done"><option selected>已完成</option><option>进行中</option><option>未开始</option></select></td><td contenteditable="true">主持</td><td contenteditable="true">林希</td><td contenteditable="true">已完成</td><td contenteditable="true">后续沟通流程和串词</td></tr>
+              <tr><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true">婚纱照</td><td contenteditable="true">两人 + 大视觉</td><td><input type="date" value="2026-08-24"></td><td contenteditable="true">7.12 去店里过合同并确认外景</td></tr>
+              <tr><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true">摄影/摄像/化妆/服装老师</td><td contenteditable="true">两人</td><td><input type="date" value="2026-08-15"></td><td contenteditable="true">填写比较满意的老师</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">领证跟拍 / 化妆确认</td><td contenteditable="true">两人</td><td><input type="date" value="2026-09-01"></td><td contenteditable="true">计划 2026-09-09 领证</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">证件照准备</td><td contenteditable="true">两人</td><td><input type="date" value="2026-08-31"></td><td contenteditable="true">领证前拍好证件照</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" data-view="timeline" data-title="重点节点">
+        <h2>重点时间节点</h2>
+        <div class="body">
+          <div class="timeline" id="timeline">
+            <div class="item"><div class="date-block"><input type="date" value="2026-07-12"></div><div><span class="tag">婚纱照</span></div><div contenteditable="true">去大视觉店里过合同，并大致确认外景。</div><div class="small" contenteditable="true">确认套餐、底片保底、外景、车和门票、选片授权。</div></div>
+            <div class="item"><div class="date-block"><input type="date" value="2026-08-15"></div><div><span class="tag">婚礼团队</span></div><div contenteditable="true">填好摄影、摄像、化妆、服装里比较满意的老师。</div><div class="small" contenteditable="true">避免临近婚礼被动安排。</div></div>
+            <div class="item"><div class="date-block"><input type="date" value="2026-08-24"></div><div><span class="tag">婚纱照拍摄</span></div><div contenteditable="true">大视觉拍婚纱照。</div><div class="small" contenteditable="true">前一周确认天气、路线、服装、妆造。</div></div>
+            <div class="item"><div class="date-block"><input type="date" value="2026-08-31"></div><div><span class="tag">领证准备</span></div><div contenteditable="true">准备并拍好领证用证件照。</div><div class="small" contenteditable="true">同时确认领证穿搭。</div></div>
+            <div class="item"><div class="date-block"><input type="date" value="2026-09-09"></div><div><span class="tag">领证</span></div><div contenteditable="true">计划领证。</div><div class="small" contenteditable="true">提前确认预约、证件、户口本、照片。</div></div>
+            <div class="item"><div class="date-block"><input type="date" value="2026-10-13"></div><div><span class="tag">付款</span></div><div contenteditable="true">支付婚宴前一个月 60% 款项：38270 元。</div><div class="small" contenteditable="true">以合同和酒店实际通知为准。</div></div>
+            <div class="item"><div class="date-block"><input type="date" value="2026-10-30"></div><div><span class="tag">菜单</span></div><div contenteditable="true">到店确认婚宴菜单。</div><div class="small" contenteditable="true">合同写明提前 15 天到店确认菜单。</div></div>
+          </div>
+          <div class="table-tools" style="margin-top:10px;"><button class="mini-btn" id="addTaskBtn">新增节点</button></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="photo" data-title="婚纱照">
+        <h2>婚纱照套餐</h2>
+        <div class="body">
+          <table data-table="photo">
+            <thead><tr><th style="width:150px;">项目</th><th>内容</th><th style="width:120px;">状态</th><th>待确认</th></tr></thead>
+            <tbody>
+              <tr><td contenteditable="true">机构</td><td contenteditable="true">大视觉</td><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true"></td></tr>
+              <tr><td contenteditable="true">拍摄日期</td><td><input type="date" value="2026-08-24"></td><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true"></td></tr>
+              <tr><td contenteditable="true">套餐价格</td><td contenteditable="true">9000 元，T2 团队 - 小波老师</td><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true">7.12 过合同</td></tr>
+              <tr><td contenteditable="true">服装 / 妆造</td><td contenteditable="true">三套服装 / 4 个妆造</td><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true"></td></tr>
+              <tr><td contenteditable="true">精修</td><td contenteditable="true">40 + 3 老带新 + 2 订单送；另备注 +3 张，共 48 张需核对</td><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">最终到底是 45 还是 48 张</td></tr>
+              <tr><td contenteditable="true">底片</td><td contenteditable="true">底片全送</td><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">保底多少需要确认</td></tr>
+              <tr><td contenteditable="true">成品</td><td contenteditable="true">14 寸相册 1 本升级梵蒂；10 寸相册 1 本升级梵蒂；36 寸油画框 1；20 寸油画框 1；10 寸摆台 2</td><td><select class="status-select doing"><option>已完成</option><option selected>进行中</option><option>未开始</option></select></td><td contenteditable="true"></td></tr>
+              <tr><td contenteditable="true">赠送</td><td contenteditable="true">婚礼开场曲；夜景 1 套；Boo K 娘家册 1；三宫格 1；免租婚纱；美妆主题；男士衬衫</td><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">所有赠送写进合同</td></tr>
+              <tr><td contenteditable="true">备注</td><td contenteditable="true">车和门票自理；待积攒待授权，选片时确定</td><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">授权规则和额外费用</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" data-view="team" data-title="团队老师">
+        <h2>老师选择</h2>
+        <div class="body">
+          <table data-table="teachers">
+            <thead><tr><th style="width:110px;">类别</th><th>老师 / 团队</th><th style="width:110px;">满意度</th><th style="width:130px;">确认截止</th><th>备注</th></tr></thead>
+            <tbody>
+              <tr><td contenteditable="true">主持</td><td contenteditable="true">林希</td><td contenteditable="true">已满意</td><td contenteditable="true">已完成</td><td contenteditable="true">后续沟通流程和串词</td></tr>
+              <tr><td contenteditable="true">婚纱照摄影</td><td contenteditable="true">T2 团队 - 小波老师</td><td contenteditable="true">待拍摄确认</td><td><input type="date" value="2026-07-12"></td><td contenteditable="true">大视觉套餐</td></tr>
+              <tr><td contenteditable="true">婚礼摄影</td><td contenteditable="true">待填写</td><td contenteditable="true">待评估</td><td><input type="date" value="2026-08-15"></td><td contenteditable="true">看完整样片和交付周期</td></tr>
+              <tr><td contenteditable="true">婚礼摄像</td><td contenteditable="true">待填写</td><td contenteditable="true">待评估</td><td><input type="date" value="2026-08-15"></td><td contenteditable="true">确认是否含快剪、成片时长</td></tr>
+              <tr><td contenteditable="true">婚礼化妆</td><td contenteditable="true">待填写</td><td contenteditable="true">待评估</td><td><input type="date" value="2026-08-15"></td><td contenteditable="true">确认试妆和当天跟妆</td></tr>
+              <tr><td contenteditable="true">服装/礼服</td><td contenteditable="true">待填写</td><td contenteditable="true">待评估</td><td><input type="date" value="2026-08-15"></td><td contenteditable="true">确认婚纱、西装、敬酒服、父母服</td></tr>
+              <tr><td contenteditable="true">领证跟拍</td><td contenteditable="true">待填写</td><td contenteditable="true">待确认</td><td><input type="date" value="2026-09-01"></td><td contenteditable="true">9.9 领证前确认</td></tr>
+              <tr><td contenteditable="true">领证化妆</td><td contenteditable="true">待填写</td><td contenteditable="true">待确认</td><td><input type="date" value="2026-09-01"></td><td contenteditable="true">9.9 领证前确认</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" data-view="contract" data-title="合同付款">
+        <h2>合同与付款</h2>
+        <div class="body">
+          <div class="note">合同付款信息改成两列记录卡，避免金额、日期、备注挤在一张表里。每个字段仍然可以直接编辑，日期也可以点日历选择。</div>
+          <div class="record-grid">
+            <article class="record-card">
+              <div class="record-head"><div class="record-title" contenteditable="true">酒店</div><div class="amount" contenteditable="true">已签</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">虔禧宴·宴会艺术酒店，太阳花厅</div><div class="field-label">时间</div><div contenteditable="true">已签</div><div class="field-label">备注</div><div contenteditable="true">合同已确认</div></div>
+            </article>
+            <article class="record-card">
+              <div class="record-head"><div class="record-title" contenteditable="true">餐标</div><div class="amount" contenteditable="true">1699/桌</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">1699 元 / 桌，不含酒水</div><div class="field-label">时间</div><div contenteditable="true">已定</div><div class="field-label">备注</div><div contenteditable="true">保底 30 桌，备用 3 桌</div></div>
+            </article>
+            <article class="record-card">
+              <div class="record-head"><div class="record-title" contenteditable="true">合同总价</div><div class="amount" contenteditable="true">63870</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">餐饮 50970 元 + 婚庆服务 12900 元</div><div class="field-label">时间</div><div contenteditable="true">已记录</div><div class="field-label">备注</div><div contenteditable="true">按合同节点付款</div></div>
+            </article>
+            <article class="record-card">
+              <div class="record-head"><div class="record-title" contenteditable="true">定金</div><div class="amount" contenteditable="true">12800</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">合同当天支付约 20%</div><div class="field-label">时间</div><div contenteditable="true">待填已付</div><div class="field-label">备注</div><div contenteditable="true">确认是否已经支付</div></div>
+            </article>
+            <article class="record-card">
+              <div class="record-head"><div class="record-title" contenteditable="true">中期款</div><div class="amount" contenteditable="true">38270</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">婚宴前一个月支付约 60%</div><div class="field-label">截止</div><div><input type="date" value="2026-10-13"></div><div class="field-label">备注</div><div contenteditable="true">以酒店实际通知为准</div></div>
+            </article>
+            <article class="record-card">
+              <div class="record-head"><div class="record-title" contenteditable="true">尾款</div><div class="amount" contenteditable="true">12800</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">开餐前确定桌数后结清约 20%</div><div class="field-label">截止</div><div><input type="date" value="2026-11-13"></div><div class="field-label">备注</div><div contenteditable="true">开餐前结清</div></div>
+            </article>
+            <article class="record-card">
+              <div class="record-head"><div class="record-title" contenteditable="true">菜单确认</div><div class="amount" contenteditable="true">待确认</div></div>
+              <div class="record-fields"><div class="field-label">内容</div><div contenteditable="true">到店确认婚宴菜单</div><div class="field-label">截止</div><div><input type="date" value="2026-10-30"></div><div class="field-label">备注</div><div contenteditable="true">合同提示提前 15 天确认</div></div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="view" data-view="details" data-title="小细节">
+        <h2>容易漏掉的小细节</h2>
+        <div class="body">
+          <table data-table="details">
+            <thead><tr><th style="width:110px;">状态</th><th style="width:130px;">类别</th><th>事项</th><th style="width:150px;">建议时间</th><th>备注</th></tr></thead>
+            <tbody>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">婚房布置</td><td contenteditable="true">确认婚房布置风格、用品、安装时间和谁负责收拾</td><td><input type="date" value="2026-10-31"></td><td contenteditable="true">气球、囍字、床品、压床娃娃、照片、灯串等</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">喜糖</td><td contenteditable="true">确定喜糖品牌、数量、包装和到货时间</td><td><input type="date" value="2026-10-15"></td><td contenteditable="true">按宾客人数多备 10%-15%</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">伴手礼</td><td contenteditable="true">确认伴郎伴娘、双方父母或重要亲友礼物</td><td><input type="date" value="2026-10-15"></td><td contenteditable="true">单独标注姓名</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">红包</td><td contenteditable="true">准备红包袋和现金，按用途分袋标注</td><td><input type="date" value="2026-11-06"></td><td contenteditable="true">接亲、伴郎伴娘、司机、工作人员、备用</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">婚车/车队</td><td contenteditable="true">确认婚车数量、路线、集合时间、停车位置</td><td><input type="date" value="2026-10-31"></td><td contenteditable="true">同步给摄影摄像和伴郎负责人</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">异地宾客</td><td contenteditable="true">确认住宿、交通、接送和到达时间</td><td><input type="date" value="2026-10-20"></td><td contenteditable="true">长辈和外地朋友单独确认</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">请柬/通知</td><td contenteditable="true">制作电子请柬并逐个确认重要亲友是否收到</td><td><input type="date" value="2026-09-30"></td><td contenteditable="true">酒店地址、时间、停车、联系人</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">戒指/誓词</td><td contenteditable="true">确认戒指保管人、誓词打印或手写版本</td><td><input type="date" value="2026-11-06"></td><td contenteditable="true">当天放入随身包</td></tr>
+              <tr><td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td><td contenteditable="true">应急包</td><td contenteditable="true">准备针线、创可贴、纸巾、吸管、充电宝、备用丝袜/鞋贴</td><td><input type="date" value="2026-11-06"></td><td contenteditable="true">交给伴娘或专人保管</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" data-view="weekly" data-title="每周同步">
+        <h2>每周同步</h2>
+        <div class="body">
+          <table data-table="weekly">
+            <thead><tr><th style="width:120px;">日期</th><th>已完成</th><th>卡点</th><th>下周要做</th><th style="width:120px;">负责人</th></tr></thead>
+            <tbody>
+              <tr><td><input type="date" value="2026-07-09"></td><td contenteditable="true">确定主持林希；婚纱照大致确认大视觉 8.24 拍摄；补充合同摘要</td><td contenteditable="true">婚纱照底片保底、外景、车和门票、选片授权需确认；摄影摄像化妆服装老师待填</td><td contenteditable="true">7.12 去大视觉过合同；整理宾客名单；确认领证证件照计划</td><td contenteditable="true">两人</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" data-view="guests" data-title="宾客名单">
+        <h2>宾客名单</h2>
+        <div class="body">
+          <table data-table="guests">
+            <thead><tr><th>姓名</th><th>关系</th><th>邀请方</th><th>是否到场</th><th>是否带家属</th><th>桌号</th><th>备注</th></tr></thead>
+            <tbody><tr><td contenteditable="true">待填写</td><td contenteditable="true">待填写</td><td contenteditable="true">新郎/新娘/双方</td><td contenteditable="true">待确认</td><td contenteditable="true">待确认</td><td contenteditable="true">待排桌</td><td contenteditable="true"></td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="footer">
+        当前版本：云端自动连接版 v2026-07-09-6。发布后建议使用 Firebase Hosting 链接访问；云端数据仍保存在 Firestore，同一个文档 ID 多设备同步。
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="cloudModal">
+    <div class="dialog">
+      <h2>云端同步设置</h2>
+      <div class="dialog-body">
+        <div class="note">页面已内置默认云端配置，正常情况下不用每台设备重复填写。只有更换 Firebase 项目或文档 ID 时才需要修改这里。</div>
+        <div class="field"><label for="docIdInput">文档 ID</label><input id="docIdInput" value="wedding-2026-11-13"></div>
+        <div class="field"><label for="firebaseConfigInput">Firebase 配置 JSON</label><textarea id="firebaseConfigInput" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'></textarea></div>
+        <div class="dialog-actions">
+          <button id="closeCloudBtn">关闭</button>
+          <button id="clearCloudBtn">清除云端配置</button>
+          <button class="primary" id="connectCloudBtn">连接并保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const APP_VERSION = 5;
+    const STORAGE_KEY = "wedding-memo-2026-11-13-v5";
+    const CLOUD_CONFIG_KEY = "wedding-memo-cloud-config-v1";
+    const DEFAULT_CLOUD_CONFIG = {
+      docId: "wedding-2026-11-13",
+      firebaseConfig: {
+        apiKey: "AIzaSyCrLfagq0DI_MTMfmQXE7DXhp56mYnqhpM",
+        authDomain: "wedding-memo-e78c4.firebaseapp.com",
+        projectId: "wedding-memo-e78c4",
+        storageBucket: "wedding-memo-e78c4.firebasestorage.app",
+        messagingSenderId: "727726210674",
+        appId: "1:727726210674:web:bf8afe10a35966b99fcceb",
+        measurementId: "G-FT1C0692CQ"
+      }
+    };
+    const statusClassMap = { "已完成": "done", "进行中": "doing", "未开始": "todo" };
+    let cloudRef = null;
+    let unsubscribeCloud = null;
+    let suppressAutoSave = false;
+    let saveTimer = null;
+
+    function updateCountdown() {
+      const wedding = new Date("2026-11-13T00:00:00+08:00");
+      const diff = Math.ceil((wedding - new Date()) / 86400000);
+      document.getElementById("countdown").textContent = diff >= 0 ? diff + " 天" : "已完成";
+    }
+
+    function buildNav() {
+      const side = document.getElementById("sideNav");
+      const mobile = document.getElementById("mobileNav");
+      side.innerHTML = "";
+      mobile.innerHTML = "";
+      document.querySelectorAll(".view").forEach(view => {
+        const id = view.dataset.view;
+        const title = view.dataset.title;
+        const btn = document.createElement("button");
+        btn.className = "nav-btn" + (view.classList.contains("active") ? " active" : "");
+        btn.textContent = title;
+        btn.onclick = () => showView(id);
+        side.appendChild(btn);
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = title;
+        option.selected = view.classList.contains("active");
+        mobile.appendChild(option);
+      });
+      const tools = document.createElement("div");
+      tools.className = "nav-tools";
+      tools.innerHTML = '<button type="button" id="addViewBtn">新增界面</button><button type="button" class="danger-btn" id="deleteViewBtn">删除当前界面</button>';
+      side.appendChild(tools);
+      tools.querySelector("#addViewBtn").onclick = addView;
+      tools.querySelector("#deleteViewBtn").onclick = deleteCurrentView;
+      mobile.onchange = () => showView(mobile.value);
+    }
+
+    function showView(id) {
+      document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.dataset.view === id));
+      document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.textContent === document.querySelector(`[data-view="${id}"]`).dataset.title));
+      document.getElementById("mobileNav").value = id;
+    }
+
+    function makeViewId() {
+      return "custom-" + Date.now().toString(36);
+    }
+
+    function addView() {
+      const rawTitle = prompt("请输入新界面名称", "新界面");
+      const title = (rawTitle || "").trim();
+      if (!title) return;
+      const id = makeViewId();
+      const section = document.createElement("section");
+      section.className = "view";
+      section.dataset.view = id;
+      section.dataset.title = title;
+      section.innerHTML = `
+        <h2 contenteditable="true">${title}</h2>
+        <div class="body">
+          <div class="note" contenteditable="true">这里可以记录新的备婚事项。表格右上角可以加行、加列。</div>
+          <table data-table="${id}">
+            <thead>
+              <tr><th>状态</th><th>事项</th><th>负责人</th><th>截止/时间</th><th>备注</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select></td>
+                <td contenteditable="true">待填写</td>
+                <td contenteditable="true">待填写</td>
+                <td><input type="date"></td>
+                <td contenteditable="true">待填写</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+      const footer = document.querySelector("#app .footer");
+      document.getElementById("app").insertBefore(section, footer);
+      bindEvents();
+      buildNav();
+      showView(id);
+      queueSave();
+    }
+
+    function deleteCurrentView() {
+      const current = document.querySelector(".view.active");
+      if (!current) return;
+      if (current.dataset.view === "overview") {
+        alert("总览界面不能删除。");
+        return;
+      }
+      const title = current.dataset.title || current.querySelector("h2")?.textContent || "当前界面";
+      if (!confirm(`确定删除「${title}」吗？删除后会同步到云端。`)) return;
+      current.remove();
+      buildNav();
+      showView("overview");
+      queueSave();
+    }
+
+    function syncFormAttributes() {
+      document.querySelectorAll("select").forEach(select => {
+        [...select.options].forEach(option => option.toggleAttribute("selected", option.selected));
+      });
+      document.querySelectorAll("input").forEach(input => {
+        if (input.type === "checkbox") input.toggleAttribute("checked", input.checked);
+        else input.setAttribute("value", input.value);
+      });
+    }
+
+    function serialize() {
+      syncFormAttributes();
+      return {
+        appVersion: APP_VERSION,
+        savedAt: new Date().toLocaleString("zh-CN"),
+        html: document.getElementById("app").innerHTML,
+        header: Object.fromEntries([...document.querySelectorAll("[data-key]")].map(el => [el.dataset.key, el.innerHTML]))
+      };
+    }
+
+    function applyData(data) {
+      if (!data) return;
+      if (data.html && data.appVersion === APP_VERSION) document.getElementById("app").innerHTML = data.html;
+      if (data.header) {
+        Object.entries(data.header).forEach(([key, html]) => {
+          const el = document.querySelector(`[data-key="${key}"]`);
+          if (el) el.innerHTML = html;
+        });
+      }
+      document.getElementById("savedAt").textContent = data.savedAt || "已载入";
+      bindEvents();
+      updateCountdown();
+      buildNav();
+    }
+
+    async function save() {
+      const data = serialize();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      document.getElementById("savedAt").textContent = data.savedAt;
+      if (cloudRef) {
+        await setDoc(cloudRef, { memo: data, updatedAt: serverTimestamp() }, { merge: true });
+        setCloudStatus("online", "云端已保存");
+      }
+    }
+
+    function queueSave() {
+      if (suppressAutoSave) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => save().catch(() => setCloudStatus("warn", "云端保存失败")), 800);
+    }
+
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(serialize(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "备婚备忘录-2026-11-13-备份.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importBackup(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try { applyData(JSON.parse(reader.result)); save(); }
+        catch { alert("备份文件无法读取。"); }
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    function addTask() {
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = '<div class="date-block"><input type="date"></div><div><span class="tag" contenteditable="true">新事项</span></div><div contenteditable="true">填写重点事项。</div><div class="small" contenteditable="true">填写备注。</div>';
+      document.getElementById("timeline").appendChild(item);
+      bindEvents();
+      queueSave();
+    }
+
+    function addTableRow(table) {
+      const colCount = table.querySelector("thead tr")?.children.length || 1;
+      const row = table.tBodies[0].insertRow();
+      for (let i = 0; i < colCount; i++) {
+        const cell = row.insertCell();
+        if (i === 0 && table.querySelector(".status-select")) {
+          cell.innerHTML = '<select class="status-select todo"><option>已完成</option><option>进行中</option><option selected>未开始</option></select>';
+        } else {
+          cell.contentEditable = "true";
+          cell.textContent = "待填写";
+        }
+      }
+      bindEvents();
+      queueSave();
+    }
+
+    function addTableColumn(table) {
+      const header = table.querySelector("thead tr");
+      const index = header ? header.children.length + 1 : 1;
+      if (header) {
+        const th = document.createElement("th");
+        th.contentEditable = "true";
+        th.textContent = "新增列" + index;
+        header.appendChild(th);
+      }
+      table.querySelectorAll("tbody tr").forEach(row => {
+        const td = document.createElement("td");
+        td.contentEditable = "true";
+        td.textContent = "待填写";
+        row.appendChild(td);
+      });
+      queueSave();
+    }
+
+    function deleteTableRow(table) {
+      const tbody = table.tBodies[0];
+      if (!tbody || tbody.rows.length <= 1) {
+        alert("至少保留一行。");
+        return;
+      }
+      if (!confirm("确定删除最后一行吗？")) return;
+      tbody.deleteRow(tbody.rows.length - 1);
+      queueSave();
+    }
+
+    function deleteTableColumn(table) {
+      const header = table.querySelector("thead tr");
+      const colCount = header ? header.children.length : table.rows[0]?.children.length || 0;
+      if (colCount <= 1) {
+        alert("至少保留一列。");
+        return;
+      }
+      if (!confirm("确定删除最后一列吗？")) return;
+      const lastIndex = colCount - 1;
+      if (header) header.deleteCell(lastIndex);
+      table.querySelectorAll("tbody tr").forEach(row => {
+        if (row.children[lastIndex]) row.deleteCell(lastIndex);
+      });
+      queueSave();
+    }
+
+    function enhanceTables() {
+      document.querySelectorAll("table").forEach(table => {
+        if (table.dataset.toolsEnhanced === "true") return;
+        table.dataset.toolsEnhanced = "true";
+        const tools = document.createElement("div");
+        tools.className = "table-tools";
+        tools.innerHTML = '<button type="button" class="mini-btn">加行</button><button type="button" class="mini-btn">加列</button><button type="button" class="mini-btn danger-btn">删行</button><button type="button" class="mini-btn danger-btn">删列</button>';
+        const [rowBtn, colBtn, delRowBtn, delColBtn] = tools.querySelectorAll("button");
+        rowBtn.onclick = () => addTableRow(table);
+        colBtn.onclick = () => addTableColumn(table);
+        delRowBtn.onclick = () => deleteTableRow(table);
+        delColBtn.onclick = () => deleteTableColumn(table);
+        table.parentElement.insertBefore(tools, table);
+      });
+    }
+
+    function bindEvents() {
+      enhanceTables();
+      document.querySelectorAll(".status-select").forEach(select => {
+        select.className = "status-select " + (statusClassMap[select.value] || "todo");
+        select.onchange = () => {
+          select.className = "status-select " + (statusClassMap[select.value] || "todo");
+          queueSave();
+        };
+      });
+      document.querySelectorAll("input, [contenteditable='true']").forEach(el => {
+        el.oninput = queueSave;
+        el.onchange = queueSave;
+      });
+      const addTaskBtn = document.getElementById("addTaskBtn");
+      if (addTaskBtn) addTaskBtn.onclick = addTask;
+    }
+
+    function setCloudStatus(kind, text) {
+      document.getElementById("cloudDot").className = "dot" + (kind ? " " + kind : "");
+      document.getElementById("cloudStatus").textContent = text;
+    }
+
+    function getCloudConfig() {
+      try { return JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY) || "null"); }
+      catch { return null; }
+    }
+
+    function fillCloudModal() {
+      const saved = getCloudConfig() || DEFAULT_CLOUD_CONFIG;
+      document.getElementById("docIdInput").value = saved.docId || "wedding-2026-11-13";
+      document.getElementById("firebaseConfigInput").value = JSON.stringify(saved.firebaseConfig || {}, null, 2);
+    }
+
+    async function connectCloud(config) {
+      if (unsubscribeCloud) unsubscribeCloud();
+      const app = initializeApp(config.firebaseConfig);
+      const db = getFirestore(app);
+      cloudRef = doc(db, "weddingMemos", config.docId || "wedding-2026-11-13");
+      setCloudStatus("warn", "正在连接云端");
+      unsubscribeCloud = onSnapshot(cloudRef, snap => {
+        if (!snap.exists()) { save().catch(console.error); return; }
+        const remote = snap.data().memo;
+        if (!remote) return;
+        const needsUpgrade = remote.appVersion !== APP_VERSION;
+        suppressAutoSave = true;
+        applyData(remote);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+        setCloudStatus("online", "云端实时同步");
+        setTimeout(() => {
+          suppressAutoSave = false;
+          if (needsUpgrade) save().catch(console.error);
+        }, 300);
+      }, () => setCloudStatus("warn", "云端连接失败"));
+    }
+
+    async function connectFromModal() {
+      try {
+        const firebaseConfig = JSON.parse(document.getElementById("firebaseConfigInput").value);
+        const docId = document.getElementById("docIdInput").value.trim() || "wedding-2026-11-13";
+        const config = { firebaseConfig, docId };
+        localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
+        await connectCloud(config);
+        await save();
+        document.getElementById("cloudModal").classList.remove("open");
+      } catch {
+        alert("云端配置读取失败，请确认粘贴的是 Firebase Web App 配置 JSON。");
+      }
+    }
+
+    document.getElementById("saveBtn").onclick = () => save().catch(() => alert("保存失败，请检查云端配置或网络。"));
+    document.getElementById("exportBtn").onclick = exportBackup;
+    document.getElementById("printBtn").onclick = () => window.print();
+    document.getElementById("cloudBtn").onclick = () => { fillCloudModal(); document.getElementById("cloudModal").classList.add("open"); };
+    document.getElementById("closeCloudBtn").onclick = () => document.getElementById("cloudModal").classList.remove("open");
+    document.getElementById("connectCloudBtn").onclick = connectFromModal;
+    document.getElementById("clearCloudBtn").onclick = () => {
+      if (unsubscribeCloud) unsubscribeCloud();
+      cloudRef = null;
+      localStorage.removeItem(CLOUD_CONFIG_KEY);
+      document.getElementById("firebaseConfigInput").value = "";
+      connectCloud(DEFAULT_CLOUD_CONFIG).catch(() => setCloudStatus("warn", "云端连接失败"));
+    };
+    document.getElementById("importFile").onchange = event => {
+      const file = event.target.files && event.target.files[0];
+      if (file) importBackup(file);
+      event.target.value = "";
+    };
+    window.addEventListener("beforeunload", () => localStorage.setItem(STORAGE_KEY, JSON.stringify(serialize())));
+
+    updateCountdown();
+    buildNav();
+    bindEvents();
+    applyData(JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"));
+    const existingCloudConfig = getCloudConfig() || DEFAULT_CLOUD_CONFIG;
+    connectCloud(existingCloudConfig).catch(() => setCloudStatus("warn", "云端连接失败"));
+  </script>
+</body>
+</html>
+
+
+
+
+
+

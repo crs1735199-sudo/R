@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>备婚页面发布可视化步骤</title>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --panel: #fff;
+      --ink: #24211d;
+      --muted: #6d665e;
+      --line: #ddd7cf;
+      --accent: #9f4f46;
+      --green: #2f7565;
+      --blue: #366aa5;
+      --soft: #f2e7df;
+      --code: #272822;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    header {
+      padding: 28px 20px 18px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    h1 { margin: 0; font-size: clamp(24px, 4vw, 38px); }
+    .lead { margin-top: 8px; color: var(--muted); }
+    .map {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .map div {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+      font-weight: 700;
+      text-align: center;
+    }
+    main { padding: 20px; }
+    section {
+      margin: 16px 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    h2 {
+      margin: 0;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfaf8;
+      font-size: 20px;
+    }
+    .body { padding: 16px; }
+    .steps { display: grid; gap: 14px; }
+    .step {
+      display: grid;
+      grid-template-columns: 64px 1fr 360px;
+      gap: 14px;
+      align-items: stretch;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fffdfb;
+    }
+    .num {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--accent);
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .what h3 { margin: 0 0 6px; font-size: 18px; }
+    .what p { margin: 6px 0; }
+    .hint {
+      padding: 8px 10px;
+      border-left: 4px solid var(--green);
+      background: #e7f3ed;
+      border-radius: 6px;
+      color: #315d4d;
+      font-size: 14px;
+    }
+    .screen {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f7f7f7;
+      padding: 10px;
+      min-height: 150px;
+    }
+    .mock-title {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ddd;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #d26b5d; }
+    .dot:nth-child(2) { background: #e0b84f; }
+    .dot:nth-child(3) { background: #69b36d; }
+    .mock-body { padding-top: 10px; }
+    .menu, .button, .terminal, .url {
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin: 7px 0;
+    }
+    .menu { background: #fff; border: 1px solid #ddd; }
+    .button { display: inline-block; background: var(--blue); color: #fff; font-weight: 700; }
+    .terminal {
+      background: var(--code);
+      color: #e8e8e8;
+      font-family: Consolas, monospace;
+      white-space: pre-wrap;
+      font-size: 13px;
+    }
+    .url {
+      background: #edf4ff;
+      border: 1px solid #c8daf5;
+      color: #184e8a;
+      font-family: Consolas, monospace;
+    }
+    code {
+      background: #f0ece6;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    .check {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .check div {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdfb;
+    }
+    @media (max-width: 900px) {
+      .map, .check { grid-template-columns: 1fr; }
+      .step { grid-template-columns: 1fr; }
+      .screen { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>备婚页面发布可视化步骤</h1>
+      <div class="lead">目标：把本地的备婚 HTML 发布成一个可以手机、电脑访问的网页链接。</div>
+      <div class="map">
+        <div>1. 打开项目</div>
+        <div>2. 打开终端</div>
+        <div>3. 登录 Firebase</div>
+        <div>4. 发布拿链接</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <h2>一、在 Trae CN 打开项目</h2>
+      <div class="body steps">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="what">
+            <h3>打开文件夹</h3>
+            <p>在 Trae CN 顶部菜单找：<code>文件</code> → <code>打开文件夹</code>。</p>
+            <p>选择这个目录：</p>
+            <div class="terminal">C:\Users\admin\Documents\Codex\2026-07-08\ban\outputs\wedding-memo-site</div>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Trae CN</div>
+            <div class="mock-body">
+              <div class="menu">文件</div>
+              <div class="menu">打开文件夹...</div>
+              <div class="button">选择 wedding-memo-site</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div class="what">
+            <h3>确认项目结构</h3>
+            <p>左侧文件列表应该能看到这几个文件：</p>
+            <div class="terminal">public
+  index.html
+firebase.json
+.firebaserc
+发布说明.md</div>
+            <div class="hint">如果只看到一个 HTML 文件，说明打开错目录了，要打开 wedding-memo-site 文件夹。</div>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 文件列表</div>
+            <div class="mock-body">
+              <div class="menu">▾ wedding-memo-site</div>
+              <div class="menu">　▾ public</div>
+              <div class="menu">　　index.html</div>
+              <div class="menu">　firebase.json</div>
+              <div class="menu">　.firebaserc</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>二、打开终端并检查环境</h2>
+      <div class="body steps">
+        <div class="step">
+          <div class="num">3</div>
+          <div class="what">
+            <h3>打开终端</h3>
+            <p>在 Trae CN 里找：<code>终端</code> → <code>新建终端</code>。</p>
+            <p>如果找不到，试试顶部菜单里的 <code>Terminal</code> 或底部面板。</p>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Trae CN</div>
+            <div class="mock-body">
+              <div class="menu">终端</div>
+              <div class="menu">新建终端</div>
+              <div class="terminal">PS C:\...\wedding-memo-site&gt;</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div class="what">
+            <h3>检查 Node 和 npm</h3>
+            <p>在终端输入：</p>
+            <div class="terminal">node -v
+npm -v</div>
+            <div class="hint">能显示版本号就继续。若提示找不到 node/npm，需要先安装 Node.js。</div>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 终端</div>
+            <div class="mock-body">
+              <div class="terminal">PS&gt; node -v
+v22.0.0
+PS&gt; npm -v
+10.0.0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">5</div>
+          <div class="what">
+            <h3>如果没有 Node.js</h3>
+            <p>打开官网：<code>https://nodejs.org/</code>，下载安装 LTS 版本。</p>
+            <p>安装完成后，重启 Trae CN，再重新执行 <code>node -v</code> 和 <code>npm -v</code>。</p>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Node.js 官网</div>
+            <div class="mock-body">
+              <div class="button">Download Node.js LTS</div>
+              <div class="menu">安装完成后重启 Trae CN</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>三、安装并登录 Firebase</h2>
+      <div class="body steps">
+        <div class="step">
+          <div class="num">6</div>
+          <div class="what">
+            <h3>安装 Firebase CLI</h3>
+            <p>在终端输入：</p>
+            <div class="terminal">npm install -g firebase-tools</div>
+            <p>安装完成后检查：</p>
+            <div class="terminal">firebase --version</div>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 终端</div>
+            <div class="mock-body">
+              <div class="terminal">PS&gt; npm install -g firebase-tools
+...
+PS&gt; firebase --version
+13.x.x</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">7</div>
+          <div class="what">
+            <h3>登录 Firebase</h3>
+            <p>输入：</p>
+            <div class="terminal">firebase login</div>
+            <p>会弹出浏览器，用你创建 Firebase 项目的 Google 账号登录。</p>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 浏览器</div>
+            <div class="mock-body">
+              <div class="menu">Google 登录</div>
+              <div class="button">允许 Firebase CLI 访问</div>
+              <div class="hint">看到 Success! 就可以回到终端。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>四、发布网站并拿到链接</h2>
+      <div class="body steps">
+        <div class="step">
+          <div class="num">8</div>
+          <div class="what">
+            <h3>确认终端在正确目录</h3>
+            <p>终端路径最后应该是 <code>wedding-memo-site</code>。</p>
+            <p>如果不是，输入：</p>
+            <div class="terminal">cd C:\Users\admin\Documents\Codex\2026-07-08\ban\outputs\wedding-memo-site</div>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 终端路径</div>
+            <div class="mock-body">
+              <div class="terminal">PS C:\Users\admin\Documents\Codex\2026-07-08\ban\outputs\wedding-memo-site&gt;</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">9</div>
+          <div class="what">
+            <h3>发布</h3>
+            <p>输入：</p>
+            <div class="terminal">firebase deploy --only hosting</div>
+            <p>等待终端出现 <code>Deploy complete!</code>。</p>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 终端</div>
+            <div class="mock-body">
+              <div class="terminal">✔ Deploy complete!
+
+Hosting URL: https://wedding-memo-e78c4.web.app</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">10</div>
+          <div class="what">
+            <h3>打开链接</h3>
+            <p>复制终端里的 Hosting URL，在浏览器打开。</p>
+            <div class="url">https://wedding-memo-e78c4.web.app</div>
+            <p>打开后点右上角 <code>云端设置</code>，填 Firebase 配置和文档 ID。</p>
+          </div>
+          <div class="screen">
+            <div class="mock-title"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 备婚页面</div>
+            <div class="mock-body">
+              <div class="button">云端设置</div>
+              <div class="menu">文档 ID：wedding-2026-11-13</div>
+              <div class="button">连接并保存</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>成功后应该看到什么</h2>
+      <div class="body check">
+        <div>
+          <strong>网页能打开</strong>
+          <p>浏览器地址栏是 <code>https://...</code>，不是 <code>file://...</code>。</p>
+        </div>
+        <div>
+          <strong>页面能保存</strong>
+          <p>右上角显示“云端已保存”或“云端实时同步”。</p>
+        </div>
+        <div>
+          <strong>Firestore 有数据</strong>
+          <p>Firebase 控制台出现 <code>weddingMemos / wedding-2026-11-13</code>。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
